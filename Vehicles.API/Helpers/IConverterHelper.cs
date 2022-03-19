@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Vehicles.API.Data.Entities;
 using Vehicles.API.Models;
@@ -17,8 +15,8 @@ namespace Vehicles.API.Helpers
 
         VehicleViewModel ToVehicleViewModel(Vehicle vehicle);
 
-        //Task<Detail> ToDetailAsync(DetailViewModel model, bool isNew);
+        Task<Detail> ToDetailAsync(DetailViewModel model);
 
-        //DetailViewModel ToDetailViewModel(Detail detail);
+        DetailViewModel ToDetailViewModel(Detail detail);
     }
 }

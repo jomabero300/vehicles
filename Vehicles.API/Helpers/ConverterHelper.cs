@@ -1,12 +1,9 @@
 ﻿using AutoMapper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Vehicles.API.Data;
 using Vehicles.API.Data.Entities;
 using Vehicles.API.Models;
-using Vehicles.Common.Enums;
 
 namespace Vehicles.API.Helpers
 {
@@ -22,13 +19,29 @@ namespace Vehicles.API.Helpers
             _mapper = mapper;
         }
 
+        public async Task<Detail> ToDetailAsync(DetailViewModel model)
+        {
+            Detail detail = _mapper.Map<Detail>(model);
+            //detail.History = await _context.Histories.FindAsync(model.HistoryId);
+            detail.Procedure = await _context.Procedures.FindAsync(model.ProcedureId);
+            return detail;
+        }
+
+        public DetailViewModel ToDetailViewModel(Detail detail)
+        {
+            DetailViewModel detailV = _mapper.Map<DetailViewModel>(detail);
+            detailV.Procedures = _combosHelper.GetComboProcedures();
+
+            return detailV;
+        }
+
         public async Task<User> ToUserAsync(UserViewModel model, Guid imageId)
         {
 
             User user = _mapper.Map<User>(model);
             user.DocumentType = await _context.DocumentTypes.FindAsync(model.DocumentTypeId);
             user.ImageId = imageId;
-            user.Id = string.IsNullOrEmpty(user.Id) ?  Guid.NewGuid().ToString():model.Id;
+            user.Id = string.IsNullOrEmpty(user.Id) ? Guid.NewGuid().ToString() : model.Id;
 
 
             return user;
@@ -94,7 +107,7 @@ namespace Vehicles.API.Helpers
             //};
         }
 
-        public  VehicleViewModel ToVehicleViewModel(Vehicle vehicle)
+        public VehicleViewModel ToVehicleViewModel(Vehicle vehicle)
         {
             return new VehicleViewModel
             {
