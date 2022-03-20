@@ -11,6 +11,7 @@ using Vehicles.API.Data.Entities;
 using Vehicles.API.Helpers;
 using Vehicles.API.Models;
 using Vehicles.Common.Enums;
+using Vehicles.Common.Models;
 
 namespace Vehicles.API.Controllers
 {
@@ -18,16 +19,19 @@ namespace Vehicles.API.Controllers
     public class UsersController : Controller
     {
         private readonly IMapper _mapper;
+        
         private readonly DataContext _context;
         private readonly IUserHelper _userHelper;
         private readonly ICombosHelper _combosHelper;
         private readonly IImageHelper _imageHelper;
+        private readonly IMailHelper _mailHelper;
+
         private readonly IConverterHelper _converterHelper;
         public UsersController(IUserHelper userHelper,
             DataContext context,
             IMapper mapper,
             ICombosHelper combosHelper,
-            IImageHelper imageHelper, IConverterHelper converterHelper)
+            IImageHelper imageHelper, IConverterHelper converterHelper, IMailHelper mailHelper)
         {
             _userHelper = userHelper;
             _context = context;
@@ -35,6 +39,7 @@ namespace Vehicles.API.Controllers
             _combosHelper = combosHelper;
             _imageHelper = imageHelper;
             _converterHelper = converterHelper;
+            _mailHelper = mailHelper;
         }
 
         public async Task<IActionResult> Index()
@@ -75,16 +80,16 @@ namespace Vehicles.API.Controllers
                 await _userHelper.AddUserAsync(user, "123456");
                 await _userHelper.AddUserToRoleAsync(user, user.UserType.ToString());
 
-                //string myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
-                //string tokenLink = Url.Action("ConfirmEmail", "Account", new
-                //{
-                //    userid = user.Id,
-                //    token = myToken
-                //}, protocol: HttpContext.Request.Scheme);
+                string myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                string tokenLink = Url.Action("ConfirmEmail", "Account", new
+                {
+                    userid = user.Id,
+                    token = myToken
+                }, protocol: HttpContext.Request.Scheme);
 
-                //Response response = _mailHelper.SendMail(model.Email, "Vehicles - Confirmación de cuenta", $"<h1>Vehicles - Confirmación de cuenta</h1>" +
-                //    $"Para habilitar el usuario, " +
-                //    $"por favor hacer clic en el siguiente enlace: </br></br><a href = \"{tokenLink}\">Confirmar Email</a>");
+                Response response = _mailHelper.SendMail(model.Email, "Vehicles - Confirmación de cuenta", $"<h1>Vehicles - Confirmación de cuenta</h1>" +
+                    $"Para habilitar el usuario, " +
+                    $"por favor hacer clic en el siguiente enlace: </br></br><a class='btn btn-sm btn-primarey' href = \"{tokenLink}\">Confirmar Email</a>");
 
                 return RedirectToAction(nameof(Index));
             }

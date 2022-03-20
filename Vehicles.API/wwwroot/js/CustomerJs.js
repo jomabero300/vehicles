@@ -60,6 +60,10 @@ function Delete(url) {
         title: "¿Esta realmente seguro de eliminar este clienete?",
         text: "Este registro no se podrá recuperar",
         icon: "warning",
+        showCancelButton: true,
+        closeOnConfirm: false,
+        confirmButtonText: "Si, borra esto!",
+        confirmButtonCollor:"#ec6c62",
         buttons: true
     }).then((borrar) => {
         if (borrar) {
